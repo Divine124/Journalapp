@@ -37,5 +37,5 @@ jobs:
         -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
         -Dsonar.login=${{ secrets.SONAR_TOKEN }}
   # If you use a SonarCloud organization, add this line below (uncomment & replace):
-          -Dsonar.organization=sujal_journalapp \
+          -Dsonar.organization=sujal \
 
