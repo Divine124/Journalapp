@@ -1,10 +1,13 @@
-name: SonarQube
+# .github/workflows/build.yml
+name: SonarCloud
+
 on:
   push:
     branches:
       - master
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   build:
     name: Build and analyze
@@ -12,30 +15,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analy      - name: Set up JDK 17
+          fetch-depth: 0
+
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: 17
-          distribution: 'zulu' # Alternative distribution options are available.
-      - name: Cache SonarQube packages
+          java-version: '17'
+          distribution: 'zulu'
+
+      - name: Cache Sonar packages
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
+
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Build and analyze with SonarCloud
-  env:
-    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  run: mvn -B verify sonar:sonar \
-        -Dsonar.projectKey=sujal_journalapp \
-        -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-        -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-  # If you use a SonarCloud organization, add this line below (uncomment & replace):
-          -Dsonar.organization=sujal \
 
+      - name: Build and analyze with SonarCloud
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: mvn -B verify sonar:sonar \
+              -Dsonar.projectKey=sujal_journalapp \
+              -Dsonar.organization=sujal \
+              -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
